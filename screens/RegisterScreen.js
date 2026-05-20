@@ -1,17 +1,21 @@
-import { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 
 export default function RegisterScreen({ navigation }) {
+  // State για τα πεδία φόρμας εγγραφής
   const [name, setName]         = useState('');
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
-  const { register } = useAuth();
+  const { register } = useAuth(); // Ανάκτηση συνάρτησης εγγραφής από το Context
 
+  // Χειρισμός πατήματος κουμπιού εγγραφής
   const handleRegister = async () => {
     try {
+      // Κλήση API για δημιουργία νέου λογαριασμού
       await register(name, email, password);
       Alert.alert('Επιτυχία!', 'Ο λογαριασμός δημιουργήθηκε');
+      // Επιστροφή στην οθόνη σύνδεσης μετά την επιτυχή εγγραφή
       navigation.goBack();
     } catch {
       Alert.alert('Σφάλμα', 'Το email χρησιμοποιείται ήδη');
@@ -20,11 +24,16 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <View style={s.container}>
+      {/* Πεδίο ονόματος */}
       <TextInput style={s.input} placeholder="Όνομα"
         value={name} onChangeText={setName} />
+      
+      {/* Πεδίο email — απενεργοποίηση αυτόματων κεφαλαίων */}
       <TextInput style={s.input} placeholder="Email"
         value={email} onChangeText={setEmail}
         keyboardType="email-address" autoCapitalize="none" />
+      
+      {/* Πεδίο κωδικού — κρυφή εισαγωγή */}
       <TextInput style={s.input} placeholder="Κωδικός"
         value={password} onChangeText={setPassword} secureTextEntry />
 

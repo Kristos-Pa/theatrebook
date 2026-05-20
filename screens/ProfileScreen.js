@@ -1,19 +1,21 @@
-import { useEffect, useState } from 'react';
-import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import client from '../api/client';
 import { useAuth } from '../context/AuthContext';
 
 export default function ProfileScreen({ navigation }) {
-  const { user, logout } = useAuth();
-  const [reservations, setReservations] = useState([]);
+  const { user, logout } = useAuth(); // Στοιχεία χρήστη και συνάρτηση αποσύνδεσης
+  const [reservations, setReservations] = useState([]); // Λίστα κρατήσεων
 
+  // Φόρτωμα κρατήσεων όταν η οθόνη αποκτά focus
   useEffect(() => {
-  const unsubscribe = navigation.addListener('focus', () => {
-    fetchReservations();
-  });
-    return unsubscribe;
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchReservations();
+    });
+    return unsubscribe; // Καθαρισμός listener όταν φεύγει η οθόνη
   }, [navigation]);
 
+  // Κλήση API για ανάκτηση κρατήσεων του συνδεδεμένου χρήστη
   const fetchReservations = async () => {
     try {
       const res = await client.get('/reservations/user');
@@ -23,18 +25,14 @@ export default function ProfileScreen({ navigation }) {
     }
   };
 
+  // Ακύρωση κράτησης και ανανέωση λίστας
   const cancel = async (id) => {
-  try {
-    console.log('Ακύρωση κράτησης ID:', id);
     await client.delete(`/reservations/${id}`);
     Alert.alert('Ακυρώθηκε!');
-    fetchReservations();
-  } catch (err) {
-    console.log('Error:', err.response?.data || err.message);
-    Alert.alert('Σφάλμα', 'Δεν έγινε ακύρωση');
-  }
-};
+    fetchReservations(); // Ανανέωση λίστας μετά την ακύρωση
+  };
 
+  // Αποσύνδεση χρήστη — επιστροφή στο Login
   const handleLogout = async () => {
     await logout();
     navigation.replace('Login');
@@ -42,6 +40,7 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <View style={s.container}>
+      {/* Header με στοιχεία χρήστη */}
       <View style={s.header}>
         <Text style={s.avatar}>{user?.name?.[0] ?? '?'}</Text>
         <Text style={s.name}>{user?.name}</Text>
@@ -49,14 +48,18 @@ export default function ProfileScreen({ navigation }) {
       </View>
 
       <Text style={s.sectionTitle}>Οι κρατήσεις μου</Text>
+      
+      {/* Λίστα κρατήσεων με δυνατότητα ακύρωσης */}
       <FlatList data={reservations} keyExtractor={i => String(i.reservation_id)}
         renderItem={({ item }) => (
           <View style={s.card}>
             <Text style={s.showTitle}>{item.title}</Text>
             <Text style={s.detail}>📅 {item.date}  🕐 {item.time}</Text>
+            {/* Εμφάνιση status κράτησης */}
             <Text style={[s.status, item.status === 'cancelled' && s.cancelled]}>
               {item.status === 'active' ? '✅ Ενεργή' : '❌ Ακυρωμένη'}
             </Text>
+            {/* Κουμπί ακύρωσης μόνο για ενεργές κρατήσεις */}
             {item.status === 'active' && (
               <TouchableOpacity style={s.cancelBtn} onPress={() => cancel(item.reservation_id)}>
                 <Text style={s.cancelText}>Ακύρωση</Text>

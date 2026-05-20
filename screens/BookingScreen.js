@@ -1,32 +1,36 @@
-import { useEffect, useState } from 'react';
-import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import client from '../api/client';
 
 export default function BookingScreen({ route, navigation }) {
+  // Λήψη παράστασης και showtime από την προηγούμενη οθόνη
   const { show, showtime } = route.params;
-  const [seats, setSeats]       = useState([]);
-  const [selected, setSelected] = useState([]);
+  const [seats, setSeats]       = useState([]); // Όλες οι θέσεις
+  const [selected, setSelected] = useState([]); // Επιλεγμένες θέσεις
 
+  // Φόρτωμα θέσεων για το συγκεκριμένο showtime
   useEffect(() => {
     client.get('/seats', { params: { showtime_id: showtime.showtime_id } })
       .then(r => setSeats(r.data));
   }, []);
 
+  // Εναλλαγή επιλογής θέσης — αν είναι κατειλημμένη δεν επιτρέπεται
   const toggleSeat = (seat) => {
-    if (seat.is_taken) return;
+    if (seat.is_taken) return; // Κατειλημμένη θέση — αγνόηση
     setSelected(prev =>
       prev.includes(seat.seat_id)
-        ? prev.filter(id => id !== seat.seat_id)
-        : [...prev, seat.seat_id]
+        ? prev.filter(id => id !== seat.seat_id) // Αφαίρεση αν ήδη επιλεγμένη
+        : [...prev, seat.seat_id]                // Προσθήκη αν δεν είναι επιλεγμένη
     );
   };
 
+  // Αποστολή κράτησης στο backend
   const confirm = async () => {
     if (selected.length === 0) return Alert.alert('Επίλεξε θέσεις!');
     try {
       await client.post('/reservations', {
         showtime_id: showtime.showtime_id,
-        seat_ids: selected
+        seat_ids: selected // Αποστολή IDs επιλεγμένων θέσεων
       });
       Alert.alert('Επιτυχία! 🎉', 'Η κράτησή σου έγινε!',
         [{ text: 'OK', onPress: () => navigation.navigate('Home') }]);
@@ -41,12 +45,13 @@ export default function BookingScreen({ route, navigation }) {
       <Text style={s.sub}>📅 {showtime.date}  🕐 {showtime.time}</Text>
 
       <Text style={s.sectionTitle}>Επίλεξε θέσεις:</Text>
+      {/* Πλέγμα θέσεων — 5 στήλες */}
       <FlatList data={seats} keyExtractor={i => String(i.seat_id)} numColumns={5}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={[s.seat,
-              item.is_taken    && s.taken,
-              selected.includes(item.seat_id) && s.picked]}
+              item.is_taken              && s.taken,  // Γκρι αν κατειλημμένη
+              selected.includes(item.seat_id) && s.picked]} // Χρυσή αν επιλεγμένη
             onPress={() => toggleSeat(item)}>
             <Text style={s.seatTxt}>{item.seat_number}</Text>
           </TouchableOpacity>

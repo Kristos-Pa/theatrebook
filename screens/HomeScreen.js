@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import client from '../api/client';
 
 export default function HomeScreen({ navigation }) {
-  const [shows, setShows]   = useState([]);
-  const [search, setSearch] = useState('');
+  const [shows, setShows]   = useState([]); // Λίστα παραστάσεων
+  const [search, setSearch] = useState(''); // Κείμενο αναζήτησης
 
+  // Φόρτωμα παραστάσεων κατά την εκκίνηση της οθόνης
   useEffect(() => { fetchShows(); }, []);
 
+  // Κλήση API για ανάκτηση παραστάσεων με προαιρετικό φίλτρο τίτλου
   const fetchShows = async (title = '') => {
     const res = await client.get('/shows', { params: { title } });
     setShows(res.data);
@@ -15,9 +17,11 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={s.container}>
+      {/* Πεδίο αναζήτησης — καλεί το API σε κάθε αλλαγή κειμένου */}
       <TextInput style={s.search} placeholder="🔍 Αναζήτηση παράστασης..."
         value={search} onChangeText={t => { setSearch(t); fetchShows(t); }} />
 
+      {/* Λίστα παραστάσεων — κάθε κάρτα οδηγεί στη σελίδα λεπτομερειών */}
       <FlatList data={shows} keyExtractor={i => String(i.show_id)}
         renderItem={({ item }) => (
           <TouchableOpacity style={s.card}

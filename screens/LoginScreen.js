@@ -1,15 +1,17 @@
-import { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 
 export default function LoginScreen({ navigation }) {
+  // State για τα πεδία φόρμας
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
+  const { login } = useAuth(); // Ανάκτηση συνάρτησης login από το Context
 
+  // Χειρισμός πατήματος κουμπιού σύνδεσης
   const handleLogin = async () => {
     try {
-      await login(email, password);
+      await login(email, password); // Κλήση login — αν πετύχει ο χρήστης μεταβαίνει αυτόματα
     } catch {
       Alert.alert('Σφάλμα', 'Λάθος email ή κωδικός');
     }
@@ -30,6 +32,7 @@ export default function LoginScreen({ navigation }) {
         <Text style={s.btnText}>Σύνδεση</Text>
       </TouchableOpacity>
 
+      {/* Σύνδεσμος για μετάβαση στην οθόνη εγγραφής */}
       <TouchableOpacity onPress={() => navigation.navigate('Register')}>
         <Text style={s.link}>Δεν έχεις λογαριασμό; Εγγραφή</Text>
       </TouchableOpacity>

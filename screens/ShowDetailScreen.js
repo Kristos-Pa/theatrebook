@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import client from '../api/client';
 
 export default function ShowDetailScreen({ route, navigation }) {
+  // Λήψη στοιχείων παράστασης από την προηγούμενη οθόνη (HomeScreen)
   const { show } = route.params;
-  const [showtimes, setShowtimes] = useState([]);
+  const [showtimes, setShowtimes] = useState([]); // Διαθέσιμες ώρες παράστασης
 
+  // Φόρτωμα διαθέσιμων ωρών για τη συγκεκριμένη παράσταση
   useEffect(() => {
     client.get('/showtimes', { params: { show_id: show.show_id } })
       .then(r => setShowtimes(r.data));
@@ -13,9 +15,13 @@ export default function ShowDetailScreen({ route, navigation }) {
 
   return (
     <View style={s.container}>
+      {/* Τίτλος και περιγραφή παράστασης */}
       <Text style={s.title}>{show.title}</Text>
       <Text style={s.desc}>{show.description}</Text>
+      
       <Text style={s.sectionTitle}>Διαθέσιμες ώρες:</Text>
+      
+      {/* Λίστα διαθέσιμων ωρών — κάθε επιλογή οδηγεί στην οθόνη κράτησης */}
       <FlatList data={showtimes} keyExtractor={i => String(i.showtime_id)}
         renderItem={({ item }) => (
           <TouchableOpacity style={s.slot}
