@@ -180,7 +180,7 @@ npx expo start --lan
 
 ---
 
-## 👥 Ομάδα
+## Ομάδα
 
 - Χρίστος Αλεξανδρος Παστρανιάκου.
 - Μάθημα: CN6035 — Mobile & Distributed Systems
