@@ -151,7 +151,6 @@ npx expo start --lan
 
 ---
 
-## Ομάδα
 
 - Χρίστος Αλεξανδρος Παστρανιάκου.
 - Μάθημα: CN6035 — Mobile & Distributed Systems
