@@ -4,19 +4,6 @@ Mobile εφαρμογή κράτησης θέσεων σε θεατρικές π
 
 ---
 
-## Τεχνολογίες
-
-| Μέρος | Τεχνολογία |
-|---|---|
-| Frontend | React Native (Expo SDK 54) |
-| Backend | Node.js + Express |
-| Βάση Δεδομένων | MariaDB |
-| Authentication | JWT (jsonwebtoken + bcrypt) |
-| HTTP Client | Axios |
-| Αποθήκευση Token | Expo SecureStore |
-
----
-
 ## Λειτουργικότητα
 
 - **Εγγραφή & Σύνδεση** χρήστη με JWT authentication
@@ -38,22 +25,6 @@ Mobile εφαρμογή κράτησης θέσεων σε θεατρικές π
 - `seats` — Θέσεις (id, showtime_id, seat_number, is_taken)
 - `reservations` — Κρατήσεις (id, user_id, showtime_id, status)
 - `reservation_seats` — Σύνδεση κρατήσεων-θέσεων
-
----
-
-## API Endpoints
-
-| Method | Endpoint | Περιγραφή |
-|---|---|---|
-| POST | /auth/register | Εγγραφή χρήστη |
-| POST | /auth/login | Σύνδεση & JWT token |
-| GET | /theatres | Λίστα θεάτρων |
-| GET | /shows | Λίστα παραστάσεων |
-| GET | /showtimes | Διαθέσιμες ώρες |
-| GET | /seats | Διαθέσιμες θέσεις |
-| POST | /reservations | Νέα κράτηση |
-| DELETE | /reservations/:id | Ακύρωση κράτησης |
-| GET | /reservations/user | Κρατήσεις χρήστη |
 
 ---
 
